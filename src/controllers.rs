@@ -50,3 +50,39 @@ pub async fn add_todo(form: web::Form<models::NewTodo>) -> impl Responder {
     })
   }
 }
+
+pub async fn update_todo(req: HttpRequest, form: web::Form<models::NewTodo>) -> impl Responder {
+  let id = req.match_info().get("id").unwrap();
+  let data = models::NewTodo {
+    title: form.title.clone(),
+    description: form.description.clone(),
+    is_complete: form.is_complete,
+  };
+
+  let updated = models::Todo::update(id.parse::<i32>().unwrap(), &config::conn(), data);
+  match updated {
+    true => web::Json(ResultProcess {
+      code: 200,
+      message: "Success to update todo",
+    }),
+    false => web::Json(ResultProcess {
+      code: 400,
+      message: "Failed to update todo",
+    }),
+  }
+}
+
+pub async fn destroy_todo(req: HttpRequest) -> impl Responder {
+  let id = req.match_info().get("id").unwrap();
+  let destroyed = models::Todo::destroy(id.parse::<i32>().unwrap(), &config::conn());
+  match destroyed {
+    true => web::Json(ResultProcess {
+      code: 200,
+      message: "Success to delete todo",
+    }),
+    false => web::Json(ResultProcess {
+      code: 400,
+      message: "Failed to delete todo",
+    }),
+  }
+}

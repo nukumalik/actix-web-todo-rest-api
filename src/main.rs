@@ -32,6 +32,8 @@ async fn main() -> io::Result<()> {
       .route("/todos", web::get().to(controllers::get_all_todo))
       .route("/todos/{id}", web::get().to(controllers::get_todo))
       .route("/todos", web::post().to(controllers::add_todo))
+      .route("/todos/{id}", web::put().to(controllers::update_todo))
+      .route("/todos/{id}", web::delete().to(controllers::destroy_todo))
   })
   .bind(&address)?;
 
